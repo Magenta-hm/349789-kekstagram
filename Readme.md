@@ -1,8 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Татьяна Керимова](https://up.htmlacademy.ru/javascript/15/user/349789).
-* Наставник: `Неизвестно`.
-
+* Наставник: [Александр Золотых](https://htmlacademy.ru/profile/id863337).
 ---
 
 _Не удаляйте и не обращайте внимание на файлы:_<br>
