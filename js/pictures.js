@@ -30,7 +30,7 @@
     var tempComment = '';
 
     for (var i = 0; i < count; i++) {
-      tempComment = tempComment + getRandomItem(COMMENT_TEMPLATES);
+      tempComment = tempComment + (i > 0 ? ' ' : '') + getRandomItem(COMMENT_TEMPLATES);
     }
 
     return tempComment;
