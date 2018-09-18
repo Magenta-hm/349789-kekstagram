@@ -6,6 +6,7 @@
   var MAX_COMMENT_COUNT_PER_PICTURE = 10;
   var MIN_LIKE_COUNT_PER_PICTURE = 15;
   var MAX_LIKE_COUNT_PER_PICTURE = 200;
+  var COMMENT_LIMIT = 5;
 
   var COMMENT_TEMPLATES = [
     'Всё отлично!',
@@ -27,7 +28,7 @@
 
   var pictureTemplate = document.querySelector('#picture').content;
   var pictureListElement = document.querySelector('.pictures');
-  var body = document.querySelector('body');
+  var body = document.body;
 
   var getRandomInteger = function (min, max) {
     var rand = min + Math.random() * (max + 1 - min);
@@ -91,9 +92,9 @@
     pictureElement.querySelector('.picture__comments')
                   .textContent = picture.comments.length;
 
-    pictureElementImg.onclick = function () {
+    pictureElementImg.addEventListener('click', function () {
       showBigPicture(picturesCount);
-    };
+    });
 
     return pictureElement;
   };
@@ -139,7 +140,7 @@
       commentListElement.removeChild(commentListElement.firstChild);
     }
 
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < COMMENT_LIMIT; i++) {
       var commentElement = commentTemplate.cloneNode(true);
 
       commentElement.querySelector('.social__picture')
@@ -171,8 +172,8 @@
 
   var cancelButton = document.querySelector('#picture-cancel');
 
-  cancelButton.onclick = function () {
+  cancelButton.addEventListener('click', function () {
     document.querySelector('.big-picture').classList.add('hidden');
     body.classList.remove('modal-open');
-  };
+  });
 })();
