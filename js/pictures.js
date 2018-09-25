@@ -1,6 +1,7 @@
 'use strict';
 
 (function pictureModule() {
+  var ESC_KEYCODE = 27;
   var PICTURE_COUNT = 25;
   var MIN_COMMENT_COUNT_PER_PICTURE = 5;
   var MAX_COMMENT_COUNT_PER_PICTURE = 10;
@@ -176,4 +177,118 @@
     document.querySelector('.big-picture').classList.add('hidden');
     body.classList.remove('modal-open');
   });
+
+  var uploadFileInput = document.querySelector('#upload-file');
+  var effectPanel = document.querySelector('.img-upload__overlay');
+  var effectPanelCancel = document.querySelector('.img-upload__cancel');
+  var effectPin = document.querySelector('.effect-level__pin');
+  var effectLine = document.querySelector('.effect-level__line');
+  var effectLineDepth = document.querySelector('.effect-level__depth');
+  var effectRadio = document.querySelectorAll('.effects__radio');
+  var imgUploadPreview = document.querySelector('.img-upload__preview');
+  var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
+
+  uploadFileInput.addEventListener('change', function () {
+    openEffectPopup();
+  });
+
+  var onEffectPopupEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeEffectPopup();
+    }
+  };
+
+  var openEffectPopup = function () {
+    imgUploadEffectLevel.classList.add('hidden');
+    effectPanel.classList.remove('hidden');
+    document.addEventListener('keydown', onEffectPopupEscPress);
+  };
+
+  var closeEffectPopup = function () {
+    uploadFileInput.value = '';
+    effectPanel.classList.add('hidden');
+    document.removeEventListener('keydown', onEffectPopupEscPress);
+  };
+
+  effectPanelCancel.addEventListener('click', function () {
+    closeEffectPopup();
+  });
+
+  effectPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startX = evt.clientX;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shiftX = startX - moveEvt.clientX;
+      startX = moveEvt.clientX;
+      var effectLineWidth = effectLine.clientWidth;
+      var pinOffset = effectPin.offsetLeft;
+      var pinPosition = Math.round(pinOffset * 100 / effectLineWidth);
+      setImgPreviewEffect(pinPosition);
+
+      var totalShiftX = effectPin.offsetLeft - shiftX;
+
+      if (totalShiftX >= 0 && totalShiftX <= effectLineWidth) {
+        effectPin.style.left = totalShiftX + 'px';
+        effectLineDepth.style.width = pinPosition + '%';
+      }
+
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
+  var effectName = '';
+
+  var setImgPreviewEffect = function (scaleValue) {
+    switch (effectName) {
+      case 'chrome':
+        imgUploadPreview.style.filter = 'grayscale(' + scaleValue / 100 + ')';
+        break;
+      case 'sepia':
+        imgUploadPreview.style.filter = 'sepia(' + scaleValue / 100 + ')';
+        break;
+      case 'marvin':
+        imgUploadPreview.style.filter = 'invert(' + scaleValue + '%)';
+        break;
+      case 'phobos':
+        imgUploadPreview.style.filter = 'blur(' + scaleValue * 3 / 100 + 'px)';
+        break;
+      case 'heat':
+        var brightness = scaleValue * 2 / 100;
+        brightness += 1;
+        imgUploadPreview.style.filter = 'brightness(' + brightness + ')';
+        break;
+    }
+  };
+
+  effectRadio.forEach(function (radioButton) {
+    radioButton.addEventListener('click', function () {
+      effectName = radioButton.value;
+      if (effectName === 'none') {
+        imgUploadEffectLevel.classList.add('hidden');
+      } else {
+        imgUploadEffectLevel.classList.remove('hidden');
+      }
+      var effectLineWidth = effectLine.clientWidth;
+      effectPin.style.left = effectLineWidth + 'px';
+      effectLineDepth.style.width = '100%';
+
+      imgUploadPreview.className = 'img-upload__preview';
+      imgUploadPreview.style = '';
+      imgUploadPreview.classList.add('effects__preview--' + effectName);
+    });
+  });
+
 })();
