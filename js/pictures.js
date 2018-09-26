@@ -82,7 +82,7 @@
 
   var pictures = generatePictures(PICTURE_COUNT);
 
-  var genetareDOMPicture = function (picture, picturesCount) {
+  var generateDOMPicture = function (picture, picturesCount) {
     var pictureElement = pictureTemplate.cloneNode(true);
 
     var pictureElementImg = pictureElement.querySelector('.picture')
@@ -106,7 +106,7 @@
     var fragment = document.createDocumentFragment();
 
     domPictures.forEach(function (domPicture, index) {
-      fragment.appendChild(genetareDOMPicture(domPicture, index));
+      fragment.appendChild(generateDOMPicture(domPicture, index));
     });
 
     return fragment;
@@ -156,12 +156,25 @@
     }
   };
 
+  var onBigPicturePopupEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      hideBigPicture();
+    }
+  };
+
+  var hideBigPicture = function () {
+    document.querySelector('.big-picture').classList.add('hidden');
+    body.classList.remove('modal-open');
+    document.removeEventListener('keydown', onBigPicturePopupEscPress);
+  };
+
   var showBigPicture = function (pictureNumber) {
     var bigPicture = showElement('.big-picture');
 
     body.classList.add('modal-open');
 
     fillElement(bigPicture, pictureNumber);
+    document.addEventListener('keydown', onBigPicturePopupEscPress);
   };
 
   var hideElement = function (selector) {
@@ -173,11 +186,10 @@
   hideElement('.social__comment-count');
   hideElement('.comments-loader');
 
-  var cancelButton = document.querySelector('#picture-cancel');
+  var bigPictureCancelButton = document.querySelector('#picture-cancel');
 
-  cancelButton.addEventListener('click', function () {
-    document.querySelector('.big-picture').classList.add('hidden');
-    body.classList.remove('modal-open');
+  bigPictureCancelButton.addEventListener('click', function () {
+    hideBigPicture();
   });
 
   var uploadFileInput = document.querySelector('#upload-file');
