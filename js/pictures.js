@@ -307,11 +307,19 @@
     });
   });
 
-  var checkHashTagFirstSymbol = function (hashTags) {
+  var assertHashTagSplipsWithSpaces = function (hashTags) {
     var result = false;
-    if (hashTags.length === 1 && hashTags[0] === '') {
-      return result;
+    for (var i = 0; i < hashTags.length; i++) {
+      if ((hashTags[i].match(/#/g) || []).length > 1) {
+        result = true;
+        break;
+      }
     }
+    return result;
+  };
+
+  var assertHashTagStartsFromHash = function (hashTags) {
+    var result = false;
     for (var i = 0; i < hashTags.length; i++) {
       if (hashTags[i].charAt(0) !== '#') {
         result = true;
@@ -321,11 +329,8 @@
     return result;
   };
 
-  var checkHashTagIsEmpty = function (hashTags) {
+  var assertHashTagIsNotEmpty = function (hashTags) {
     var result = false;
-    if (hashTags.length === 1 && hashTags[0] === '') {
-      return result;
-    }
     for (var i = 0; i < hashTags.length; i++) {
       if (hashTags[i].charAt(0) === '#' && hashTags[i].length === 1) {
         result = true;
@@ -335,11 +340,8 @@
     return result;
   };
 
-  var checkHashTagDuplicates = function (hashTags) {
+  var assertHashTagNotDuplicate = function (hashTags) {
     var result = false;
-    if (hashTags.length === 1 && hashTags[0] === '') {
-      return result;
-    }
     for (var i = 0; i < hashTags.length; i++) {
       var currentHashTag = hashTags[i].toLowerCase();
       for (var j = 0; j < hashTags.length; j++) {
@@ -352,22 +354,16 @@
     return result;
   };
 
-  var checkHashTagCount = function (hashTags) {
+  var assertHashTagCountLessFive = function (hashTags) {
     var result = false;
-    if (hashTags.length === 1 && hashTags[0] === '') {
-      return result;
-    }
     if (hashTags.length > HASH_TAGS_COUNT_LIMIT) {
       result = true;
     }
     return result;
   };
 
-  var checkHashTagLength = function (hashTags) {
+  var assertHashTagLengthLessTwenty = function (hashTags) {
     var result = false;
-    if (hashTags.length === 1 && hashTags[0] === '') {
-      return result;
-    }
     for (var i = 0; i < hashTags.length; i++) {
       if (hashTags[i].length > HASH_TAG_LENGTH_LIMIT) {
         result = true;
@@ -379,19 +375,22 @@
 
   var checkFormValidation = function (hashTags) {
     var errorMessage = [];
-    if (checkHashTagFirstSymbol(hashTags)) {
+    if (assertHashTagSplipsWithSpaces(hashTags)) {
+      errorMessage.push('Хэш-теги должны разделяться пробелами.');
+    }
+    if (assertHashTagStartsFromHash(hashTags)) {
       errorMessage.push('Хэш-тег должен начинаться с символа # (решётка).');
     }
-    if (checkHashTagIsEmpty(hashTags)) {
+    if (assertHashTagIsNotEmpty(hashTags)) {
       errorMessage.push('Хеш-тег не может состоять только из одной решётки.');
     }
-    if (checkHashTagDuplicates(hashTags)) {
+    if (assertHashTagNotDuplicate(hashTags)) {
       errorMessage.push('Один и тот же хэш-тег не может быть использован дважды.');
     }
-    if (checkHashTagCount(hashTags)) {
+    if (assertHashTagCountLessFive(hashTags)) {
       errorMessage.push('Нельзя указать больше пяти хэш-тегов.');
     }
-    if (checkHashTagLength(hashTags)) {
+    if (assertHashTagLengthLessTwenty(hashTags)) {
       errorMessage.push('Максимальная длина одного хэш-тега 20 символов, включая решётку.');
     }
     return errorMessage.join('\r\n');
@@ -399,11 +398,18 @@
 
   imgUploadButton.addEventListener('click', function () {
     var hashTags = hashTagInput.value.split(' ');
+    // очистим массив от пустых элементов
+    for (var i = 0; i < hashTags.length; i++) {
+      if (hashTags[i] === '') {
+        hashTags.splice(i, 1);
+        i--;
+      }
+    }
     var validationMessage = checkFormValidation(hashTags);
     hashTagInput.setCustomValidity(validationMessage);
   });
 
-  hashTagInput.addEventListener('keydown', function () {
+  hashTagInput.addEventListener('input', function () {
     hashTagInput.setCustomValidity('');
   });
 
