@@ -307,7 +307,7 @@
     });
   });
 
-  var assertHashTagSplipsWithSpaces = function (hashTags) {
+  var assertHashTagSplitsWithSpaces = function (hashTags) {
     var result = false;
     for (var i = 0; i < hashTags.length; i++) {
       if ((hashTags[i].match(/#/g) || []).length > 1) {
@@ -375,7 +375,7 @@
 
   var checkFormValidation = function (hashTags) {
     var errorMessage = [];
-    if (assertHashTagSplipsWithSpaces(hashTags)) {
+    if (assertHashTagSplitsWithSpaces(hashTags)) {
       errorMessage.push('Хэш-теги должны разделяться пробелами.');
     }
     if (assertHashTagStartsFromHash(hashTags)) {
