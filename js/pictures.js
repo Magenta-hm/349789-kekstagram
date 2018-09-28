@@ -8,6 +8,8 @@
   var MIN_LIKE_COUNT_PER_PICTURE = 15;
   var MAX_LIKE_COUNT_PER_PICTURE = 200;
   var COMMENT_LIMIT = 5;
+  var HASH_TAGS_COUNT_LIMIT = 5;
+  var HASH_TAG_LENGTH_LIMIT = 20;
 
   var COMMENT_TEMPLATES = [
     'Всё отлично!',
@@ -80,7 +82,7 @@
 
   var pictures = generatePictures(PICTURE_COUNT);
 
-  var genetareDOMPicture = function (picture, picturesCount) {
+  var generateDOMPicture = function (picture, picturesCount) {
     var pictureElement = pictureTemplate.cloneNode(true);
 
     var pictureElementImg = pictureElement.querySelector('.picture')
@@ -104,7 +106,7 @@
     var fragment = document.createDocumentFragment();
 
     domPictures.forEach(function (domPicture, index) {
-      fragment.appendChild(genetareDOMPicture(domPicture, index));
+      fragment.appendChild(generateDOMPicture(domPicture, index));
     });
 
     return fragment;
@@ -154,12 +156,25 @@
     }
   };
 
+  var onBigPicturePopupEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      hideBigPicture();
+    }
+  };
+
+  var hideBigPicture = function () {
+    document.querySelector('.big-picture').classList.add('hidden');
+    body.classList.remove('modal-open');
+    document.removeEventListener('keydown', onBigPicturePopupEscPress);
+  };
+
   var showBigPicture = function (pictureNumber) {
     var bigPicture = showElement('.big-picture');
 
     body.classList.add('modal-open');
 
     fillElement(bigPicture, pictureNumber);
+    document.addEventListener('keydown', onBigPicturePopupEscPress);
   };
 
   var hideElement = function (selector) {
@@ -171,11 +186,10 @@
   hideElement('.social__comment-count');
   hideElement('.comments-loader');
 
-  var cancelButton = document.querySelector('#picture-cancel');
+  var bigPictureCancelButton = document.querySelector('#picture-cancel');
 
-  cancelButton.addEventListener('click', function () {
-    document.querySelector('.big-picture').classList.add('hidden');
-    body.classList.remove('modal-open');
+  bigPictureCancelButton.addEventListener('click', function () {
+    hideBigPicture();
   });
 
   var uploadFileInput = document.querySelector('#upload-file');
@@ -187,13 +201,15 @@
   var effectRadio = document.querySelectorAll('.effects__radio');
   var imgUploadPreview = document.querySelector('.img-upload__preview');
   var imgUploadEffectLevel = document.querySelector('.img-upload__effect-level');
+  var hashTagInput = document.querySelector('.text__hashtags');
+  var imgUploadButton = document.querySelector('.img-upload__submit');
 
   uploadFileInput.addEventListener('change', function () {
     openEffectPopup();
   });
 
   var onEffectPopupEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
+    if (evt.keyCode === ESC_KEYCODE && document.activeElement !== hashTagInput) {
       closeEffectPopup();
     }
   };
@@ -289,6 +305,112 @@
       imgUploadPreview.style = '';
       imgUploadPreview.classList.add('effects__preview--' + effectName);
     });
+  });
+
+  var assertHashTagSplitsWithSpaces = function (hashTags) {
+    var result = false;
+    for (var i = 0; i < hashTags.length; i++) {
+      if ((hashTags[i].match(/#/g) || []).length > 1) {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  };
+
+  var assertHashTagStartsFromHash = function (hashTags) {
+    var result = false;
+    for (var i = 0; i < hashTags.length; i++) {
+      if (hashTags[i].charAt(0) !== '#') {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  };
+
+  var assertHashTagIsNotEmpty = function (hashTags) {
+    var result = false;
+    for (var i = 0; i < hashTags.length; i++) {
+      if (hashTags[i].charAt(0) === '#' && hashTags[i].length === 1) {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  };
+
+  var assertHashTagNotDuplicate = function (hashTags) {
+    var result = false;
+    for (var i = 0; i < hashTags.length; i++) {
+      var currentHashTag = hashTags[i].toLowerCase();
+      for (var j = 0; j < hashTags.length; j++) {
+        if (currentHashTag === hashTags[j].toLowerCase() && j !== i) {
+          result = true;
+          break;
+        }
+      }
+    }
+    return result;
+  };
+
+  var assertHashTagCountLessFive = function (hashTags) {
+    var result = false;
+    if (hashTags.length > HASH_TAGS_COUNT_LIMIT) {
+      result = true;
+    }
+    return result;
+  };
+
+  var assertHashTagLengthLessTwenty = function (hashTags) {
+    var result = false;
+    for (var i = 0; i < hashTags.length; i++) {
+      if (hashTags[i].length > HASH_TAG_LENGTH_LIMIT) {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  };
+
+  var checkFormValidation = function (hashTags) {
+    var errorMessage = [];
+    if (assertHashTagSplitsWithSpaces(hashTags)) {
+      errorMessage.push('Хэш-теги должны разделяться пробелами.');
+    }
+    if (assertHashTagStartsFromHash(hashTags)) {
+      errorMessage.push('Хэш-тег должен начинаться с символа # (решётка).');
+    }
+    if (assertHashTagIsNotEmpty(hashTags)) {
+      errorMessage.push('Хеш-тег не может состоять только из одной решётки.');
+    }
+    if (assertHashTagNotDuplicate(hashTags)) {
+      errorMessage.push('Один и тот же хэш-тег не может быть использован дважды.');
+    }
+    if (assertHashTagCountLessFive(hashTags)) {
+      errorMessage.push('Нельзя указать больше пяти хэш-тегов.');
+    }
+    if (assertHashTagLengthLessTwenty(hashTags)) {
+      errorMessage.push('Максимальная длина одного хэш-тега 20 символов, включая решётку.');
+    }
+    return errorMessage.join('\r\n');
+  };
+
+  imgUploadButton.addEventListener('click', function () {
+    var hashTags = hashTagInput.value.split(' ');
+    // очистим массив от пустых элементов
+    for (var i = 0; i < hashTags.length; i++) {
+      if (hashTags[i] === '') {
+        hashTags.splice(i, 1);
+        i--;
+      }
+    }
+    var validationMessage = checkFormValidation(hashTags);
+    hashTagInput.setCustomValidity(validationMessage);
+  });
+
+  hashTagInput.addEventListener('input', function () {
+    hashTagInput.setCustomValidity('');
   });
 
 })();
