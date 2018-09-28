@@ -393,7 +393,7 @@
     if (assertHashTagLengthLessTwenty(hashTags)) {
       errorMessage.push('Максимальная длина одного хэш-тега 20 символов, включая решётку.');
     }
-    return errorMessage.join('\r\n');
+    return errorMessage.join(' ');
   };
 
   imgUploadButton.addEventListener('click', function () {
