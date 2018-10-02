@@ -26,7 +26,11 @@ window.preview = (function () {
         commentListElement.removeChild(commentListElement.firstChild);
       }
 
-      for (var i = 0; i < window.const.COMMENT_LIMIT; i++) {
+      var maxCommentsQuantity = picture.comments.length >= window.constants.COMMENT_LIMIT
+        ? window.constants.COMMENT_LIMIT
+        : picture.comments.length;
+
+      for (var i = 0; i < maxCommentsQuantity; i++) {
         var commentElement = commentTemplate.cloneNode(true);
 
         commentElement.querySelector('.social__picture')
@@ -40,7 +44,7 @@ window.preview = (function () {
     },
 
     onBigPicturePopupEscPress: function (evt) {
-      if (evt.keyCode === window.const.ESC_KEYCODE) {
+      if (evt.keyCode === window.constants.ESC_KEYCODE) {
         window.preview.hideBigPicture();
       }
     },

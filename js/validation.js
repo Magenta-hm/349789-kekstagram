@@ -52,7 +52,7 @@ window.validation = (function () {
 
     assertHashTagCountLessFive: function (hashTags) {
       var result = false;
-      if (hashTags.length > window.const.HASH_TAGS_COUNT_LIMIT) {
+      if (hashTags.length > window.constants.HASH_TAGS_COUNT_LIMIT) {
         result = true;
       }
       return result;
@@ -61,7 +61,7 @@ window.validation = (function () {
     assertHashTagLengthLessTwenty: function (hashTags) {
       var result = false;
       for (var i = 0; i < hashTags.length; i++) {
-        if (hashTags[i].length > window.const.HASH_TAG_LENGTH_LIMIT) {
+        if (hashTags[i].length > window.constants.HASH_TAG_LENGTH_LIMIT) {
           result = true;
           break;
         }
@@ -69,7 +69,7 @@ window.validation = (function () {
       return result;
     },
 
-    checkFormValidation: function (hashTags) {
+    checkHashTagsValidation: function (hashTags) {
       var errorMessage = [];
       if (this.assertHashTagSplitsWithSpaces(hashTags)) {
         errorMessage.push('Хэш-теги должны разделяться пробелами.');
@@ -90,6 +90,13 @@ window.validation = (function () {
         errorMessage.push('Максимальная длина одного хэш-тега 20 символов, включая решётку.');
       }
       return errorMessage.join(' ');
+    },
+
+    checkCommentValidation: function (comment) {
+      if (comment.length > window.constants.COMMENT_LENGTH_LIMIT) {
+        return 'Максимальная длина комментария 140 символов.';
+      }
+      return '';
     }
 
   };
