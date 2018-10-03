@@ -11,6 +11,7 @@
     MAX_BLUR_PX: 3,
     MAX_BRIGHTNESS: 2,
     MAX_EFFECT_VALUE: 100,
+    SCALE_STEP: 0.25,
 
     DESCRIPTION_TEMPLATES: [
       'Тестим новую камеру!',

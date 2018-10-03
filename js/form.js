@@ -17,6 +17,9 @@
   var imgUploadButton = document.querySelector('.img-upload__submit');
   var form = document.querySelector('.img-upload__form');
   var main = document.querySelector('main');
+  var scaleButtonMinus = document.querySelector('.scale__control--smaller');
+  var scaleButtonPlus = document.querySelector('.scale__control--bigger');
+  var scaleInput = document.querySelector('.scale__control--value');
   var effectName = '';
 
   uploadFileInput.addEventListener('change', function () {
@@ -96,7 +99,7 @@
       if (effectName === 'phobos') {
         imgUploadPreview.style.filter = 'blur(3px)';
       } else {
-        imgUploadPreview.style = '';
+        imgUploadPreview.style.filter = '';
       }
       imgUploadPreview.classList.add('effects__preview--' + effectName);
       effectLevelValue.value = window.constants.MAX_EFFECT_VALUE;
@@ -156,7 +159,9 @@
 
   var openEffectPopup = function () {
     effectRadioNone.checked = true;
+    scaleInput.value = 100 + '%';
     imgUploadPreview.style = '';
+    imgUploadPreview.style.transform = 'scale(1.0)';
     imgUploadPreview.className = 'img-upload__preview';
     effectLevelValue.value = window.constants.MAX_EFFECT_VALUE;
     imgUploadEffectLevel.classList.add('hidden');
@@ -217,6 +222,30 @@
 
   commentInput.addEventListener('input', function () {
     commentInput.setCustomValidity('');
+  });
+
+  var changePictureSize = function (plus) {
+    var scaleValue = scaleInput.value;
+    scaleValue = parseFloat(scaleValue) / 100;
+    if (plus) {
+      if (scaleValue + window.constants.SCALE_STEP <= 1) {
+        scaleValue = scaleValue + window.constants.SCALE_STEP;
+      }
+    } else {
+      if (scaleValue - window.constants.SCALE_STEP >= 0.25) {
+        scaleValue = scaleValue - window.constants.SCALE_STEP;
+      }
+    }
+    imgUploadPreview.style.transform = 'scale(' + scaleValue + ')';
+    scaleInput.value = scaleValue * 100 + '%';
+  };
+
+  scaleButtonMinus.addEventListener('click', function () {
+    changePictureSize(false);
+  });
+
+  scaleButtonPlus.addEventListener('click', function () {
+    changePictureSize(true);
   });
 
 })();
