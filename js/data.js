@@ -1,19 +1,23 @@
 'use strict';
 
-window.data = (function () {
-  return {
+(function dataModule() {
 
-    parsePictures: function (dataPictures) {
-      var tempPictures = [];
+  window.data = (function () {
+    return {
 
-      dataPictures.forEach(function (picture) {
-        picture.description = window.util.getRandomItem(window.constants.DESCRIPTION_TEMPLATES);
-        tempPictures.push(picture);
-      });
+      parsePictures: function (dataPictures) {
+        var tempPictures = [];
 
-      return tempPictures;
-    }
+        dataPictures.forEach(function (picture) {
+          picture.description = window.util.getRandomItem(window.constants.DESCRIPTION_TEMPLATES);
+          tempPictures.push(picture);
+        });
 
-  };
+        return tempPictures;
+      }
+
+    };
+
+  })();
 
 })();

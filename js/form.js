@@ -1,6 +1,7 @@
 'use strict';
 
 (function formModule() {
+
   var uploadFileInput = document.querySelector('#upload-file');
   var effectPanelCancel = document.querySelector('#upload-cancel');
   var effectPin = document.querySelector('.effect-level__pin');

@@ -1,20 +1,24 @@
 'use strict';
 
-window.util = (function () {
-  return {
+(function utilModule() {
 
-    getRandomInteger: function (min, max) {
-      var rand = min + Math.random() * (max + 1 - min);
+  window.util = (function () {
+    return {
 
-      rand = Math.floor(rand);
+      getRandomInteger: function (min, max) {
+        var rand = min + Math.random() * (max + 1 - min);
 
-      return rand;
-    },
+        rand = Math.floor(rand);
 
-    getRandomItem: function (array) {
-      return array[this.getRandomInteger(0, array.length - 1)];
-    }
+        return rand;
+      },
 
-  };
+      getRandomItem: function (array) {
+        return array[this.getRandomInteger(0, array.length - 1)];
+      }
+
+    };
+
+  })();
 
 })();

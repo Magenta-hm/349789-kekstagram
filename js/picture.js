@@ -1,40 +1,44 @@
 'use strict';
 
-window.picture = (function () {
-  var pictureTemplate = document.querySelector('#picture').content;
+(function pictureModule() {
 
-  return {
+  window.picture = (function () {
+    var pictureTemplate = document.querySelector('#picture').content;
 
-    generateDOMPicture: function (picture, action) {
-      var pictureElement = pictureTemplate.cloneNode(true);
+    return {
 
-      var pictureElementImg = pictureElement.querySelector('.picture')
-                                            .querySelector('img');
-      pictureElementImg.setAttribute('src', picture.url);
+      generateDOMPicture: function (picture, action) {
+        var pictureElement = pictureTemplate.cloneNode(true);
 
-      pictureElement.querySelector('.picture__likes')
-                    .textContent = picture.likes;
+        var pictureElementImg = pictureElement.querySelector('.picture')
+                                              .querySelector('img');
+        pictureElementImg.setAttribute('src', picture.url);
 
-      pictureElement.querySelector('.picture__comments')
-                    .textContent = picture.comments.length;
+        pictureElement.querySelector('.picture__likes')
+                      .textContent = picture.likes;
 
-      pictureElementImg.addEventListener('click', function () {
-        action(picture);
-      });
+        pictureElement.querySelector('.picture__comments')
+                      .textContent = picture.comments.length;
 
-      return pictureElement;
-    },
+        pictureElementImg.addEventListener('click', function () {
+          action(picture);
+        });
 
-    generateDOMPictures: function (pictures, action) {
-      var fragment = document.createDocumentFragment();
+        return pictureElement;
+      },
 
-      pictures.forEach(function (picture) {
-        fragment.appendChild(window.picture.generateDOMPicture(picture, action));
-      });
+      generateDOMPictures: function (pictures, action) {
+        var fragment = document.createDocumentFragment();
 
-      return fragment;
-    }
+        pictures.forEach(function (picture) {
+          fragment.appendChild(window.picture.generateDOMPicture(picture, action));
+        });
 
-  };
+        return fragment;
+      }
+
+    };
+
+  })();
 
 })();

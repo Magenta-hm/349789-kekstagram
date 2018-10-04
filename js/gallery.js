@@ -1,6 +1,7 @@
 'use strict';
 
 (function galleryModule() {
+
   var pictureListElement = document.querySelector('.pictures');
   var bigPictureCancelButton = document.querySelector('#picture-cancel');
 
