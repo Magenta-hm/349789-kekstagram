@@ -2,43 +2,39 @@
 
 (function pictureModule() {
 
-  window.picture = (function () {
-    var pictureTemplate = document.querySelector('#picture').content;
+  var pictureTemplateElement = document.querySelector('#picture').content;
 
-    return {
+  window.picture = {
+    generateDOMPicture: function (picture, action) {
+      var pictureElement = pictureTemplateElement.cloneNode(true);
 
-      generateDOMPicture: function (picture, action) {
-        var pictureElement = pictureTemplate.cloneNode(true);
+      var pictureImgElement = pictureElement.querySelector('.picture')
+                                            .querySelector('img');
+      pictureImgElement.setAttribute('src', picture.url);
 
-        var pictureElementImg = pictureElement.querySelector('.picture')
-                                              .querySelector('img');
-        pictureElementImg.setAttribute('src', picture.url);
+      pictureElement.querySelector('.picture__likes')
+                    .textContent = picture.likes;
 
-        pictureElement.querySelector('.picture__likes')
-                      .textContent = picture.likes;
+      pictureElement.querySelector('.picture__comments')
+                    .textContent = picture.comments.length;
 
-        pictureElement.querySelector('.picture__comments')
-                      .textContent = picture.comments.length;
+      pictureImgElement.addEventListener('click', function () {
+        action(picture);
+      });
 
-        pictureElementImg.addEventListener('click', function () {
-          action(picture);
-        });
+      return pictureElement;
+    },
 
-        return pictureElement;
-      },
+    generateDOMPictures: function (pictures, action) {
+      var fragment = document.createDocumentFragment();
 
-      generateDOMPictures: function (pictures, action) {
-        var fragment = document.createDocumentFragment();
+      pictures.forEach(function (picture) {
+        fragment.appendChild(window.picture.generateDOMPicture(picture, action));
+      });
 
-        pictures.forEach(function (picture) {
-          fragment.appendChild(window.picture.generateDOMPicture(picture, action));
-        });
+      return fragment;
+    }
 
-        return fragment;
-      }
-
-    };
-
-  })();
+  };
 
 })();
