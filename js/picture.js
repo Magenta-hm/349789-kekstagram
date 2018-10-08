@@ -1,16 +1,16 @@
 'use strict';
 
-window.picture = (function () {
-  var pictureTemplate = document.querySelector('#picture').content;
+(function pictureModule() {
 
-  return {
+  var pictureTemplateElement = document.querySelector('#picture').content;
 
+  window.picture = {
     generateDOMPicture: function (picture, action) {
-      var pictureElement = pictureTemplate.cloneNode(true);
+      var pictureElement = pictureTemplateElement.cloneNode(true);
 
-      var pictureElementImg = pictureElement.querySelector('.picture')
+      var pictureImgElement = pictureElement.querySelector('.picture')
                                             .querySelector('img');
-      pictureElementImg.setAttribute('src', picture.url);
+      pictureImgElement.setAttribute('src', picture.url);
 
       pictureElement.querySelector('.picture__likes')
                     .textContent = picture.likes;
@@ -18,7 +18,7 @@ window.picture = (function () {
       pictureElement.querySelector('.picture__comments')
                     .textContent = picture.comments.length;
 
-      pictureElementImg.addEventListener('click', function () {
+      pictureImgElement.addEventListener('click', function () {
         action(picture);
       });
 
