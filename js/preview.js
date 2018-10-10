@@ -1,11 +1,12 @@
 'use strict';
 
-window.preview = (function () {
+(function previewModule() {
+
   var body = document.body;
 
-  return {
-
+  window.preview = {
     fillElement: function (element, picture) {
+
       element.querySelector('.big-picture__img')
              .querySelector('img')
              .setAttribute('src', picture.url);
@@ -19,15 +20,19 @@ window.preview = (function () {
       element.querySelector('.social__caption')
              .textContent = picture.description;
 
-      var commentTemplate = document.querySelector('.social__comment');
+      var commentTemplateElement = document.querySelector('.social__comment');
       var commentListElement = document.querySelector('.social__comments');
 
       while (commentListElement.firstChild) {
         commentListElement.removeChild(commentListElement.firstChild);
       }
 
-      for (var i = 0; i < window.const.COMMENT_LIMIT; i++) {
-        var commentElement = commentTemplate.cloneNode(true);
+      var maxCommentsQuantity = picture.comments.length >= window.constants.COMMENT_LIMIT
+        ? window.constants.COMMENT_LIMIT
+        : picture.comments.length;
+
+      for (var i = 0; i < maxCommentsQuantity; i++) {
+        var commentElement = commentTemplateElement.cloneNode(true);
 
         commentElement.querySelector('.social__picture')
                       .setAttribute('src', 'img/avatar-' + window.util.getRandomInteger(1, 6) + '.svg');
@@ -40,7 +45,7 @@ window.preview = (function () {
     },
 
     onBigPicturePopupEscPress: function (evt) {
-      if (evt.keyCode === window.const.ESC_KEYCODE) {
+      if (evt.keyCode === window.constants.ESC_KEYCODE) {
         window.preview.hideBigPicture();
       }
     },
@@ -52,12 +57,12 @@ window.preview = (function () {
     },
 
     showBigPicture: function (picture) {
-      var bigPicture = document.querySelector('.big-picture');
+      var bigPictureElement = document.querySelector('.big-picture');
 
-      bigPicture.classList.remove('hidden');
+      bigPictureElement.classList.remove('hidden');
       body.classList.add('modal-open');
 
-      window.preview.fillElement(bigPicture, picture);
+      window.preview.fillElement(bigPictureElement, picture);
       document.addEventListener('keydown', window.preview.onBigPicturePopupEscPress);
     },
 
